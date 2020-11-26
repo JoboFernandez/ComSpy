@@ -1,3 +1,11 @@
+'''
+SCREEN CAPTURE
+1. This program creates a folder where screenshots are stored
+2. Screenshots are captured are certain time interval and are stored in the screenshot folder
+3. A file capacity variable is used to limit the quantity of captured images and save disk space
+4. At file capacity, old files are replaced by new ones
+'''
+
 from datetime import datetime
 import pyautogui
 import time
@@ -5,7 +13,6 @@ import shutil
 import os
 import sys
 
-print("[STARTING] program has started")
 
 def start_screen_capture():
     screenshot_dir = os.path.join(os.getcwd(), "screenshot")
@@ -28,11 +35,9 @@ def start_screen_capture():
         filename = f"desktopspy_{timestamp}.png"
         pyautogui.screenshot().save(fr"{filename}")
         file_holder.append(filename)
-        print(file_holder)
         time.sleep(capture_time_interval)
 
-def main():
-    start_screen_capture()
 
 if __name__ == "__main__":
-    main()
+    print("[RUNNING] program is running")
+    start_screen_capture()
