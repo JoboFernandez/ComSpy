@@ -1,0 +1,11 @@
+- hide server program when running
+
+- add gui
+
+- test for multiple clients
+
+- instead of inputting ip address in client, detect all devices connected to the network
+
+- client option to live stream and image save
+
+
